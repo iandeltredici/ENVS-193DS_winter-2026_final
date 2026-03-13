@@ -1,0 +1,43 @@
+---
+title: "final_ENVS193DS"
+author: "Ian Del Tredici"
+date: "03-12-2026"
+format:
+  html:
+    toc: TRUE
+execute:
+  message: false # use this to make sure messages don't show up
+  warning: false # use this to make sure warnings don't show up
+---
+
+[Github Repo](https://github.com/iandeltredici/ENVS-193DS_winter-2026_final)
+
+```{r}
+#| label: load in packages and data
+library(tidyverse) #load packages
+library(janitor)
+library(here)
+library(readxl)
+library(ggeffects)
+library(showtext)
+font_add_google("Noto Serif Georgian")
+showtext_auto()
+reading_data <- read.csv(here("data", "reading_data_final.csv")) #load reading data
+kelp <- read.csv(here("data", "kelp_data_LTER.csv"))
+```
+
+# Problem 1. Research Writing
+## a. Transparent statistical methods
+In part 1 they used a simple linear regression model to determine if precipitation predicts flooded wetland area. In part 2 they used Kruskal-Wallis test to compare medians between two variables with one variable (water year classification) having multiple levels.
+
+## b. Figure needed
+Five boxplots with water year classification on the x-axis and flooded wetland are would be the best method for displaying their test. Boxplots are the perfect visualization because they display the median and allow comparison between the five groups.
+
+## c. Suggestions for rewriting
+Part 1: Precipitation did not significantly predict flooded wetland area (simple linear regression, F(df model, df error) = test statistic, R² = effect size, p = 0.11, α = significance level). Therefore we fail to reject the null hypothesis that precipitation does not predict flood wetland area.
+
+Part 2: There was no significant difference in median flooded wetland areas between water year classifications (wet, above normal, below normal, dry, critical drought) (Kruskal-Wallis test, χ²(4) = test statistic, p = 0.12, α = significance level).
+
+## d. Interpretation
+The number of water control structures in the area, a discrete variable, could influence the flooded area of a wetland because it directly relates to how much influence wetland managers have when controlling flooding. A higher number of water control structures would give more precision, allowing wetland managers to dial in the amount of they allow to flow through, thereby dramatically affecting how much wetland is flooded.
+
