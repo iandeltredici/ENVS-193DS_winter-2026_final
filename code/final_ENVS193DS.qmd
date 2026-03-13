@@ -90,3 +90,8 @@ ggplot(data = kelp_clean,
   theme(plot.title = element_text(hjust = 0.5),
       panel.border = element_blank())
 ```
+## d. Interpretation
+Isla Vista is the site with the most variable mean kelp fronds per year because you can see the line connecting the data points stretching all the way up to nearly 40 kelp fronds and then back down to below 10. Visually, you can see the data line for Isla Vista dance all over the graph, the data points are farther apart and less consistent than the other two sites.
+Carpinteria is the site with the least variable mean kelp fronds per year, visually identifiable because the data points are more consistent and the overall trend of the line does not exhibit massive swings in kelp fronds. The line remains just below or around 10 kelp fronds per year for nearly 25 years.
+
+# Problem 3. Data analysis
