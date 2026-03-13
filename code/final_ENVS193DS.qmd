@@ -65,3 +65,28 @@ kelp_clean <- kelp |>
 
 ```
 
+## b. Understanding the data
+Data collected on 2000-09-22 in transect 6 and quad 40 was removed because the data sheet went missing but the value of the fronds in that quad in that transect is -99999. This information was found on row 73 of the "kelp" data frame under the notes column that reported "missing datasheet".
+
+## c. Visualize data
+```{r}
+#| label: line plot
+#| message: false
+ggplot(data = kelp_clean, 
+       aes( x = year,
+            y = mean_fronds,
+            color = site_name)) +
+  geom_point() +
+  geom_line() +
+  scale_color_manual(values = c(
+    "Naples" = "forestgreen",
+    "Isla Vista" = "darkseagreen2",
+    "Carpinteria" = "aquamarine3")) +
+  labs(title = "Sites vary in mean kelp fronds per year",
+       x = "Year",
+       y = "Mean kelp fronds per year",
+       color = "Site") +
+  theme_minimal(base_family = "Noto Serif Georgian") +
+  theme(plot.title = element_text(hjust = 0.5),
+      panel.border = element_blank())
+```
