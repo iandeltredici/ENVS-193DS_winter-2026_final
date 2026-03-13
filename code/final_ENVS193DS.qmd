@@ -41,3 +41,27 @@ Part 2: There was no significant difference in median flooded wetland areas betw
 ## d. Interpretation
 The number of water control structures in the area, a discrete variable, could influence the flooded area of a wetland because it directly relates to how much influence wetland managers have when controlling flooding. A higher number of water control structures would give more precision, allowing wetland managers to dial in the amount of they allow to flow through, thereby dramatically affecting how much wetland is flooded.
 
+# Problem 2. Data visualization
+## a. Cleaning and summarizing
+```{r}
+#| label: cleaning and summarizing
+#| message: false
+kelp_clean <- kelp |> 
+  clean_names() |>  # function 3
+  filter(site %in% c("IVEE", "NAPL", "CARP")) |> #function 6
+  filter(!(date == "2000-09-22" & transect == "6" & quad == "40")) |>  #function 1 
+  mutate(site_name = case_when( #function 8
+  site == "NAPL" ~ "Naples",
+  site == "IVEE" ~ "Isla Vista",
+  site == "CARP" ~ "Carpinteria"
+  )) |>
+  mutate(site_name = as_factor(site_name), #function 2
+       site_name = fct_relevel(site_name,
+                               "Naples", "Isla Vista", "Carpinteria"))|> 
+  group_by(site_name, year) |>  #function 5
+  summarize(mean_fronds = mean(fronds)) |> #function 7
+  ungroup() #function 4
+
+
+```
+
