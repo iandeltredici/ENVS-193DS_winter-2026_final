@@ -24,6 +24,7 @@ font_add_google("Noto Serif Georgian")
 showtext_auto()
 reading_data <- read.csv(here("data", "reading_data_final.csv")) #load reading data
 kelp <- read.csv(here("data", "kelp_data_LTER.csv"))
+mopl <- read.csv(here("data", "MOPL_nest-site_selection_Duchardt_et_al._2019.csv"))
 ```
 
 # Problem 1. Research Writing
@@ -89,9 +90,18 @@ ggplot(data = kelp_clean,
   theme_minimal(base_family = "Noto Serif Georgian") +
   theme(plot.title = element_text(hjust = 0.5),
       panel.border = element_blank())
+slice_sample(kelp_clean, n=5)
+str(kelp_clean)
 ```
 ## d. Interpretation
 Isla Vista is the site with the most variable mean kelp fronds per year because you can see the line connecting the data points stretching all the way up to nearly 40 kelp fronds and then back down to below 10. Visually, you can see the data line for Isla Vista dance all over the graph, the data points are farther apart and less consistent than the other two sites.
 Carpinteria is the site with the least variable mean kelp fronds per year, visually identifiable because the data points are more consistent and the overall trend of the line does not exhibit massive swings in kelp fronds. The line remains just below or around 10 kelp fronds per year for nearly 25 years.
 
 # Problem 3. Data analysis
+```{r}
+#| label: cleaning and wrangling
+#| include: false
+mopl_v2 <- mopl |> 
+  clean_names() |> 
+  select(edgedist, id, vo_nest)
+```
