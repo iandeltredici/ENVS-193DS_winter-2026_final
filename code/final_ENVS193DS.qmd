@@ -20,6 +20,8 @@ library(here)
 library(readxl)
 library(ggeffects)
 library(showtext)
+library(MuMIn) # model selection
+library(DHARMa)
 font_add_google("Noto Serif Georgian")
 showtext_auto()
 reading_data <- read.csv(here("data", "reading_data_final.csv")) #load reading data
@@ -104,4 +106,117 @@ Carpinteria is the site with the least variable mean kelp fronds per year, visua
 mopl_v2 <- mopl |> 
   clean_names() |> 
   select(edgedist, id, vo_nest)
+ggplot(data = mopl_v2,
+       aes(x = edgedist,
+           y = id,
+           color = id)) +
+  geom_jitter()
+ggplot(data = mopl_v2,
+       aes(x = vo_nest,
+           y = id,
+           color = id)) +
+  geom_jitter()
 ```
+## a. Response variable
+The 1s and 0s represent whether the nest site was used (1) or available (0) by the Mountain plovers.
+
+## b. Purpose of study
+Visual obstruction is a continuous variable, as implied from paragraph 2 in the data collection subsection of Nest-Site Selection where he researchers describe measuring visual obstruction at the nest using a Robel pole and also in the data table where it's clear that vo_nest is a continuous variable. As visual obstruction increases, the probability of Mountain Plover nest site use would decrease because Mountain Plovers prefer nest sites with short and sparse vegetation, as explained in paragraph 2 of the Introduction.
+
+Distance to prairie dog colony edge is also a continuous variable. As distance to nearest prairie dog colony increases, the probability of Mountain Plover nest site use would increase because Mountain Plovers prefer disturbed soil for nesting and disturbances are higher as you get further into a colony. Information about disturbance was found in paragraph 5 of the Introduction and in the Methods section, specifically paragraph 2 of the modeling framework subsection in Adult Mountain Plover Density.
+
+## c. Table of Models
+4 models total:
+
+| Model number | Visual obstruction    | Distance to colony | Model description    
+|--------------|:---------------------:|:------------------:|:----------------------------------:|  
+| 0            |                       |                    | no predictors (null model)         |
+| 1            |         X             |      X             | all predictors (saturated model)   | 
+| 2            |         X             |                    | just visual obstruction            |
+| 3            |                       |          X         | just distance to prairie dog colony|
+
+## d. Run the models
+```{r}
+#| label: model running
+#| message: false
+#| include: false
+mopl_clean <- mopl |> 
+  clean_names() |> 
+  select(edgedist, id, vo_nest) |> 
+  mutate(used_bin = case_match(
+    id,
+    "used" ~ 1,
+    "available" ~ 0))
+
+# model 0: null model
+model0 <- glm(used_bin ~ 1,
+             data = mopl_clean,
+             family = "binomial")
+
+# model 1: all predictors
+model1 <- glm(used_bin ~ edgedist +
+               vo_nest,
+             data = mopl_clean,
+             family = "binomial")
+
+# model 2: edgedist only
+model2 <- glm(used_bin ~ edgedist,
+             data = mopl_clean,
+             family = "binomial")
+
+# model 3: vo_nest only
+model3 <- glm(used_bin ~ vo_nest,
+             data = mopl_clean,
+             family = "binomial")
+```
+## e. Seect the best model
+```{r}
+#| label: Akaike's Information Criterion
+AICc(model0,
+    model1,
+    model2,
+    model3) |> 
+  arrange(AICc)
+```
+The best model as determined by Akaike's Information Criterion (AIC) and with a score of 331.81, was the model with only visual obstruction as a predictor and nest use as the response.
+
+## f. Check the diagnostics
+```{r}
+#| label: DHARMa time
+plot(
+  simulateResiduals(model3)
+)
+```
+
+## g. VIsualize the model predictions
+```{r}
+#| label: graphing glm
+#| message: false
+mod_preds <- ggpredict(model3,
+                       terms = "vo_nest")
+ggplot(mopl_clean,
+       aes(x = vo_nest,
+           y = used_bin)) +
+  geom_point(size = 3,
+             alpha = 0.4,
+             color = "cadetblue")+
+  geom_ribbon(data = mod_preds,
+              aes(x = x,
+                  y = predicted,
+                  ymin = conf.low,
+                  ymax = conf.high),
+              alpha = 0.4,
+              fill = "cadetblue2") +
+  geom_line(data = mod_preds,
+            aes(x = x,
+                y = predicted),
+            color = "navy") +
+  scale_y_continuous(limits = c(0,1),
+                     breaks =c(0,1)) +
+  labs( x = "Visual Obstruction from Nest (cm)",
+        y = "Nest Site Usage (1 = used, 0 = available)",
+        title = "Nest site usage decreases with visual obstruction") +
+  theme_minimal()
+  
+```
+
