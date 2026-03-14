@@ -22,6 +22,7 @@ library(ggeffects)
 library(showtext)
 library(MuMIn) # model selection
 library(DHARMa)
+library(gtsummary)
 font_add_google("Noto Serif Georgian")
 showtext_auto()
 reading_data <- read.csv(here("data", "reading_data_final.csv")) #load reading data
@@ -188,7 +189,7 @@ plot(
 )
 ```
 
-## g. VIsualize the model predictions
+## g. Visualize the model predictions
 ```{r}
 #| label: graphing glm
 #| message: false
@@ -215,8 +216,20 @@ ggplot(mopl_clean,
                      breaks =c(0,1)) +
   labs( x = "Visual Obstruction from Nest (cm)",
         y = "Nest Site Usage (1 = used, 0 = available)",
-        title = "Nest site usage decreases with visual obstruction") +
+        title = "Nest site usage with visual obstruction") +
   theme_minimal()
   
 ```
+## h. Write a caption for your figure
+**Figure 1. As visual obstruction at the nest site increases, the probability of nest site usage decreases.**. Each teal-colored point represents an individual nest that was assessed. The blue line represents the probability of a nest site being used as visual obstruction increases in distance. The light blue shaded area around the line is a 95% confidence interval. Nest site usage is protrayed as a binomial variable with 1 being a used nest and 0 representing an available nest. Data from: Duchardt, Courtney; Beck, Jeffrey; Augustine, David (2020). Mountain Plover habitat selection and nest survival in relation to weather variability and spatial attributes of Black-tailed Prairie Dog disturbance [Dataset]. Dryad. https://doi.org/10.5061/dryad.ttdz08kt7
+
+## i. Calculate model predictions
+```{r}
+#| label: model predictions
+#| message: false
+ggpredict(model3,
+          terms = "vo_nest [0]")
+```
+Mountain plovers tend to use nests that are less visually obstructed at the nest site (Figure 1.) With every 1cm increase in visual obstruction, the odds of a nest site being used decreases by a factor of 0.58 (95% CI: [])
+
 
