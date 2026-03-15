@@ -23,6 +23,7 @@ library(showtext)
 library(MuMIn) # model selection
 library(DHARMa)
 library(gtsummary)
+library(rstatix)
 font_add_google("Noto Serif Georgian")
 showtext_auto()
 reading_data <- read.csv(here("data", "reading_data_final.csv")) #load reading data
@@ -214,7 +215,7 @@ ggplot(mopl_clean,
             color = "navy") +
   scale_y_continuous(limits = c(0,1),
                      breaks =c(0,1)) +
-  labs( x = "Visual Obstruction from Nest (cm)",
+  labs( x = "Visual Obstruction from Nest (dm)",
         y = "Nest Site Usage (1 = used, 0 = available)",
         title = "Nest site usage with visual obstruction") +
   theme_minimal()
@@ -230,6 +231,96 @@ ggplot(mopl_clean,
 ggpredict(model3,
           terms = "vo_nest [0]")
 ```
-Mountain plovers tend to use nests that are less visually obstructed at the nest site (Figure 1.) With every 1cm increase in visual obstruction, the odds of a nest site being used decreases by a factor of 0.58 (95% CI: [])
+```{r}
+#| include: false
+gtsummary::tbl_regression(model3,
+                          exponentiate = TRUE)
+```
+## j. Interpret your results
+Mountain plovers tend to use nests when there is less visual obstruction at the nest site (Figure 1.) With every 1 dm increase in visual obstruction, the odds of a nest site being used decreases by a factor of 0.58 (95% CI: [0.47, 0.69], p < 0.001, $\alpha$ = 0.05). If visual obstruction was 0 on the Robel index, the probability of a nest site being used is 0.73 (95% CI: [0.65, 0.80]), which makes sense biologically as there is some natural variability even with no obstruction. This is likely because Mountain plovers prefer habitats that have scarce vegetation and flat ground, allowing them to more easily detect predators while still providing some refugia. Distance to colony edge was not found to be a strong predictor of nest site usage, with models containing only visual obstruction as the predictor showing a stronger relationship to nest usage. 
 
+# Problem 4. Affective and exploratory visualizations
+## a. Comparing visualizations
+In Homework 2 I represented the relationship between reading genre and reading time using multiple bar graphs but in Homework 3 I used multiple box plots. Initially I thought that bar graphs would be the bets way to show how length of reading time changes with genre but as I collected more data I realized that the bin number and lack of specificity made it difficult to visualize the differences. To fix this I created box plots in Homework 3 that clearly show the median reading length for each genre, allowing easy comparison while also showing distribution.
+
+In both Homework 2 and Homework 3 I created a scatter plot demonstrating the positive relationship between number of pages read and reading time. In terms of the bar graphs and the box plots, both visualizations show the distribution of data collected for each genre and display the range of data collected, albeit with some differences in specificity.
+
+There appears to be no difference in median reading length between genres in both the bar graphs from Homework 2 and the boxplots in Homework 3. In the Homework 2 visualization there was such few data that no inferences could be made and it was difficult to interpret how reading time differed across genre. By Homework 3, all data had been collected (n=32) and you can see that all median bars across genres are about equal, with Nonfiction Novels having the largest spread.
+
+I talked to An during week 9 about my visualization, specifically the bar plots, because I felt like it did not answer the question I had at the start, nor was it easy to compare across genres. I suggested, with approval, switching to box plots which I did because I felt it more accurately portrayed the data and made any differences easier to visually identify. I also received questions about the theme selection in my scatter plot from both An and my classmates but I decided to keep the gray theme because it makes the data between reading genre visually separate.
+
+## b. To determine if there is any relationship between reading genre and reading session length, the best analysis would be a Kruskal-Wallis test because I have a continuous response variable (reading session length) and a categorical predictor variable with three factors (Nonfiction Novels, News, Research Papers) but at least one of the factors is not normally distributed.
+
+```{r}
+#| label: check assumptions/ prove non-normality
+#| message: false
+reading_clean <- reading_data |> 
+  clean_names() |> 
+  rename("reading_time" = "time_spent_reading_min",
+         "genre" = "reading_type") 
+reading_shapiro <- reading_clean |> 
+  group_by(genre) |> 
+  summarize(p_value = shapiro.test(reading_time)$p.value)
+print(reading_shapiro)
+ggplot(data = reading_clean,
+       aes(x = reading_time,
+           fill = genre)) +
+  geom_histogram(bins = 6) + 
+  facet_wrap(~genre)
+```
+
+```{r}
+#| label: run kruskal-wallis and dunn
+#| message: false
+kruskal.test(
+  reading_time ~ genre,
+  data = reading_clean
+)
+dunn_test(
+  reading_time ~ genre,
+  data = reading_clean,
+  p.adjust.method = "bonferroni"
+)
+kruskal_effsize(
+  reading_time ~ genre,
+  data = reading_clean
+)
+```
+
+## d. Create a visualization
+```{r}
+#| label: creating graphs
+#| message: false
+ggplot(data = reading_clean, #create base layer with personal data
+       aes(x = genre, #set x axis
+           y = reading_time, #set y axis
+           color = genre, #color by genre
+           fill = genre)) + #fill by genre
+  geom_boxplot(width = 0.6, #create box plot and set width
+               alpha = 0.2, #set transparency of box plot
+               outliers = FALSE) + #remove outliers 
+  geom_jitter(height = 0, #create jitter plot and restrict vertical jitter
+              width = 0.2) + #set horizontal jitter
+  labs(title = "Length of reading session per genre", #plot title
+       x = "Genre", #x axis title
+       y = "Reading session length (min)", #y axis title
+       subtitle = "March 1, 2026") + #subtitle
+  theme_minimal() + #set theme to minimal
+  scale_color_manual(values = c( #change colors manually
+    "Nonfiction Novels" = "darkgreen",
+    "Research Paper" = "darkorchid",
+    "News" = "coral2"))
+```
+
+## e. Write a caption
+**Figure 1. There is no difference in length of reading session across genre.** Each genre contains a box plot displaying the median reading length, upper and lower quartiles, and minimum and maximum. Outliers are hid for visual clarity but each genre’s highest point is classified as an outlier. Individual observations are layered on as data points. Genres are separated by color (pink: News, green: Nonfiction Novels, purple: Research Paper). All genres overlap with nearly identical medians. Data collected from January 6, 2026 to March 1, 2026 by Ian Del Tredici.
+
+## f. Write about your results
+I found no significant difference in median reading session between Nonfiction Novels, News, and Research Papers (Kruskal-Wallis test, χ²(2) = 0.703, p = 0.704, α = 0.05). The effect size was negligible ($\eta^2$ = -0.044) between the medians of the genres (Nonfiction Novels = 15.5min, News = 16min, Research Paper = 13min). This suggests that reading genre is not a strong predictor of reading session length and there may be other factors that contribute.
+
+```{r}
+reading_clean |> 
+  group_by(genre) |> 
+  summarize(median = median(reading_time))
+```
 
