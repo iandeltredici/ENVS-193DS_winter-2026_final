@@ -36,10 +36,10 @@ mopl <- read.csv(here("data", "MOPL_nest-site_selection_Duchardt_et_al._2019.csv
 In part 1 they used a simple linear regression model to determine if precipitation predicts flooded wetland area. In part 2 they used Kruskal-Wallis test to compare medians between two variables with one variable (water year classification) having multiple levels.
 
 ## b. Figure needed
-Five boxplots with water year classification on the x-axis and flooded wetland are would be the best method for displaying their test. Boxplots are the perfect visualization because they display the median and allow comparison between the five groups.
+Five boxplots with water year classification on the x-axis and flooded wetland are would be the best method for displaying their test. Boxplots are the perfect visualization because they visually display the median, distribution, and allow comparison between the five groups
 
 ## c. Suggestions for rewriting
-Part 1: Precipitation did not significantly predict flooded wetland area (simple linear regression, F(df model, df error) = test statistic, R² = effect size, p = 0.11, α = significance level). Therefore we fail to reject the null hypothesis that precipitation does not predict flood wetland area.
+Part 1: Precipitation did not significantly predict flooded wetland area (simple linear regression, F(df model, df error) = test statistic, R² = effect size, p = 0.11, α = significance level). 
 
 Part 2: There was no significant difference in median flooded wetland areas between water year classifications (wet, above normal, below normal, dry, critical drought) (Kruskal-Wallis test, χ²(4) = test statistic, p = 0.12, α = significance level).
 
@@ -125,7 +125,7 @@ The 1s and 0s represent whether the nest site was used (1) or available (0) by t
 ## b. Purpose of study
 Visual obstruction is a continuous variable, as implied from paragraph 2 in the data collection subsection of Nest-Site Selection where he researchers describe measuring visual obstruction at the nest using a Robel pole and also in the data table where it's clear that vo_nest is a continuous variable. As visual obstruction increases, the probability of Mountain Plover nest site use would decrease because Mountain Plovers prefer nest sites with short and sparse vegetation, as explained in paragraph 2 of the Introduction.
 
-Distance to prairie dog colony edge is also a continuous variable. As distance to nearest prairie dog colony increases, the probability of Mountain Plover nest site use would increase because Mountain Plovers prefer disturbed soil for nesting and disturbances are higher as you get further into a colony. Information about disturbance was found in paragraph 5 of the Introduction and in the Methods section, specifically paragraph 2 of the modeling framework subsection in Adult Mountain Plover Density.
+Distance to prairie dog colony edge is also a continuous variable. As distance to nearest prairie dog colony increases, the probability of Mountain Plover nest site use would decrease because Mountain Plovers prefer disturbed soil with sparse vegetation to spot predators while also providing some cover. Information about the relationship between distance to colony and nest-site usage was found in the caption of the abstract figure while information about disturbance was found in paragraph 5 of the Introduction and in the Methods section, specifically paragraph 2 of the modeling framework subsection in Adult Mountain Plover Density.
 
 ## c. Table of Models
 4 models total:
@@ -134,14 +134,13 @@ Distance to prairie dog colony edge is also a continuous variable. As distance t
 |--------------|:---------------------:|:------------------:|:----------------------------------:|  
 | 0            |                       |                    | no predictors (null model)         |
 | 1            |         X             |      X             | all predictors (saturated model)   | 
-| 2            |         X             |                    | just visual obstruction            |
-| 3            |                       |          X         | just distance to prairie dog colony|
+| 2            |                       |      X             | just distance to prairie dog colony|
+| 3            |         X             |                    | just visual obstruction            |
 
 ## d. Run the models
-```{r}
+```{r, echo = TRUE, results = 'hide'}
 #| label: model running
 #| message: false
-#| include: false
 mopl_clean <- mopl |> #create new clean data frame
   clean_names() |> #clean column names
   select(edgedist, id, vo_nest) |> #select only three columns
@@ -171,7 +170,7 @@ model3 <- glm(used_bin ~ vo_nest, #run glm with other predictor
              data = mopl_clean, #data frame
              family = "binomial") #set binomial distribution
 ```
-## e. Seect the best model
+## e. Select the best model
 ```{r}
 #| label: Akaike's Information Criterion
 AICc(model0, #run AICc for all models
@@ -180,14 +179,14 @@ AICc(model0, #run AICc for all models
     model3) |> 
   arrange(AICc) #arrange lowest to highest
 ```
-The best model as determined by Akaike's Information Criterion (AIC) and with a score of 331.81, was the model with only visual obstruction as a predictor and nest use as the response.
+The best model as determined by Akaike's Information Criterion (AIC) with a score of 331.81, is the model with only visual obstruction as a predictor and nest use as the response.
 
 ## f. Check the diagnostics
 ```{r}
 #| label: DHARMa time
 plot( #create qqplot and DHARMa plots of residuals
-  simulateResiduals(model3)
-)
+  simulateResiduals(model3)) #use model 3
+
 ```
 
 ## g. Visualize the model predictions
@@ -222,13 +221,13 @@ ggplot(mopl_clean, #create base layer with mopl_clean data frame
   
 ```
 ## h. Write a caption for your figure
-**Figure 1. As visual obstruction at the nest site increases, the probability of nest site usage decreases.**. Each teal-colored point represents an individual nest that was assessed. The blue line represents the probability of a nest site being used as visual obstruction increases in distance. The light blue shaded area around the line is a 95% confidence interval. Nest site usage is protrayed as a binomial variable with 1 being a used nest and 0 representing an available nest. Data from: Duchardt, Courtney; Beck, Jeffrey; Augustine, David (2020). Mountain Plover habitat selection and nest survival in relation to weather variability and spatial attributes of Black-tailed Prairie Dog disturbance [Dataset]. Dryad. https://doi.org/10.5061/dryad.ttdz08kt7
+**Figure 1. As visual obstruction at the nest site increases, the probability of nest site usage decreases.** Each teal-colored point represents an individual nest that was assessed. The blue line represents the probability of a nest site being used as visual obstruction increases in distance. The light blue shaded area around the line is a 95% confidence interval. Nest site usage is protrayed as a binomial variable with 1 being a used nest and 0 representing an available nest. Data from: Duchardt, Courtney; Beck, Jeffrey; Augustine, David (2020). Mountain Plover habitat selection and nest survival in relation to weather variability and spatial attributes of Black-tailed Prairie Dog disturbance [Dataset]. Dryad. https://doi.org/10.5061/dryad.ttdz08kt7
 
 ## i. Calculate model predictions
 ```{r}
 #| label: model predictions
 #| message: false
-ggpredict(model3, #calculate model prediction when vo_nest is 0
+ggpredict(model3, #use model3 for predictions
           terms = "vo_nest [0]") #prediction when vo_nest is 0
 ```
 ```{r}
@@ -249,7 +248,8 @@ There appears to be no difference in median reading length between genres in bot
 
 I talked to An during week 9 about my visualization, specifically the bar plots, because I felt like it did not answer the question I had at the start, nor was it easy to compare across genres. I suggested, with approval, switching to box plots which I did because I felt it more accurately portrayed the data and made any differences easier to visually identify. I also received questions about the theme selection in my scatter plot from both An and my classmates but I decided to keep the gray theme because it makes the data between reading genre visually separate.
 
-## b. To determine if there is any relationship between reading genre and reading session length, the best analysis would be a Kruskal-Wallis test because I have a continuous response variable (reading session length) and a categorical predictor variable with three factors (Nonfiction Novels, News, Research Papers) but at least one of the factors is not normally distributed.
+## b. Designing an analysis
+To determine if there is any difference in reading session length between reading genres, the best analysis would be a Kruskal-Wallis test because I have a continuous response variable (reading session length) and a categorical predictor variable with three factors (Nonfiction Novels, News, Research Papers) but at least one of the factors is not normally distributed.
 
 ```{r}
 #| label: check assumptions/ prove non-normality
@@ -310,7 +310,7 @@ ggplot(data = reading_clean, #create base layer with personal data
 ```
 
 ## e. Write a caption
-**Figure 1. There is no difference in length of reading session across genre.** Each genre contains a box plot displaying the median reading length, upper and lower quartiles, and minimum and maximum. Outliers are hid for visual clarity but each genre’s highest point is classified as an outlier. Individual observations are layered on as data points. Genres are separated by color (pink: News, green: Nonfiction Novels, purple: Research Paper). All genres overlap with nearly identical medians. Data collected from January 6, 2026 to March 1, 2026 by Ian Del Tredici.
+**Figure 1. There is no difference in length of reading session across genre.** Each genre contains a box plot displaying the median reading length, upper and lower quartiles, and minimum and maximum. Outliers are hidden for visual clarity but each genre’s highest point is classified as an outlier. Individual observations are layered on as data points. Genres are separated by color (pink: News, green: Nonfiction Novels, purple: Research Paper). All genres overlap with nearly identical medians. Data collected from January 6, 2026 to March 1, 2026 by Ian Del Tredici.
 
 ## f. Write about your results
 ```{r}
