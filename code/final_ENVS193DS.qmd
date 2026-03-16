@@ -1,5 +1,5 @@
 ---
-title: "final_ENVS193DS"
+title: "ENVS 193DS Final"
 author: "Ian Del Tredici"
 date: "03-12-2026"
 format:
@@ -24,11 +24,11 @@ library(MuMIn) # model selection
 library(DHARMa)
 library(gtsummary)
 library(rstatix)
-font_add_google("Noto Serif Georgian")
-showtext_auto()
+font_add_google("Noto Serif Georgian") #download custom font into Rstudio
+showtext_auto() #enables downloaded font
 reading_data <- read.csv(here("data", "reading_data_final.csv")) #load reading data
-kelp <- read.csv(here("data", "kelp_data_LTER.csv"))
-mopl <- read.csv(here("data", "MOPL_nest-site_selection_Duchardt_et_al._2019.csv"))
+kelp <- read.csv(here("data", "kelp_data_LTER.csv")) #load in kelp data
+mopl <- read.csv(here("data", "MOPL_nest-site_selection_Duchardt_et_al._2019.csv")) #load in mopl data
 ```
 
 # Problem 1. Research Writing
@@ -51,21 +51,21 @@ The number of water control structures in the area, a discrete variable, could i
 ```{r}
 #| label: cleaning and summarizing
 #| message: false
-kelp_clean <- kelp |> 
-  clean_names() |>  # function 3
-  filter(site %in% c("IVEE", "NAPL", "CARP")) |> #function 6
-  filter(!(date == "2000-09-22" & transect == "6" & quad == "40")) |>  #function 1 
-  mutate(site_name = case_when( #function 8
+kelp_clean <- kelp |> #create new clean object
+  clean_names() |>  # function 3- clean column names
+  filter(site %in% c("IVEE", "NAPL", "CARP")) |> #function 6- filter within the site column for only IVEE, NAPL, and CARP sites
+  filter(!(date == "2000-09-22" & transect == "6" & quad == "40")) |>  #function 1- filter out specific row at date 2000-09-22 in transcet 6 and quadrat 40
+  mutate(site_name = case_when( #function 8- create new column with site names that are fully spelled out
   site == "NAPL" ~ "Naples",
   site == "IVEE" ~ "Isla Vista",
   site == "CARP" ~ "Carpinteria"
   )) |>
-  mutate(site_name = as_factor(site_name), #function 2
+  mutate(site_name = as_factor(site_name), #function 2- set site_name to a factor with three levels (Naples, Isla Vista, Carpinteria)
        site_name = fct_relevel(site_name,
                                "Naples", "Isla Vista", "Carpinteria"))|> 
-  group_by(site_name, year) |>  #function 5
-  summarize(mean_fronds = mean(fronds)) |> #function 7
-  ungroup() #function 4
+  group_by(site_name, year) |>  #function 5- group by site name and year
+  summarize(mean_fronds = mean(fronds)) |> #function 7 #calculate mean of frond length
+  ungroup() #function 4- ungroup by site_name and year
 
 
 ```
@@ -77,25 +77,25 @@ Data collected on 2000-09-22 in transect 6 and quad 40 was removed because the d
 ```{r}
 #| label: line plot
 #| message: false
-ggplot(data = kelp_clean, 
-       aes( x = year,
-            y = mean_fronds,
-            color = site_name)) +
-  geom_point() +
-  geom_line() +
-  scale_color_manual(values = c(
+ggplot(data = kelp_clean, #create base layer using kelp_clean data frame
+       aes(x = year, #set x axis
+           y = mean_fronds, #set y axis
+           color = site_name)) + #color by site
+  geom_point() + #add individual points
+  geom_line() + #connect points with a line
+  scale_color_manual(values = c( #manually set colors of each site
     "Naples" = "forestgreen",
     "Isla Vista" = "darkseagreen2",
     "Carpinteria" = "aquamarine3")) +
-  labs(title = "Sites vary in mean kelp fronds per year",
-       x = "Year",
-       y = "Mean kelp fronds per year",
-       color = "Site") +
-  theme_minimal(base_family = "Noto Serif Georgian") +
-  theme(plot.title = element_text(hjust = 0.5),
-      panel.border = element_blank())
-slice_sample(kelp_clean, n=5)
-str(kelp_clean)
+  labs(title = "Sites vary in mean kelp fronds per year", #create plot title
+       x = "Year", #x axis title
+       y = "Mean kelp fronds per year", #y axis title
+       color = "Site") + #change legend title
+  theme_minimal(base_family = "Noto Serif Georgian") + #use custom font for all labels and set theme
+  theme(plot.title = element_text(hjust = 0.5), #set plot title to the center
+      panel.border = element_blank()) #remove background panel (redundant with theme_minimal)
+slice_sample(kelp_clean, n=5) #display 5 random rows of kelp_clean
+str(kelp_clean) #check structure of kelp_clean
 ```
 ## d. Interpretation
 Isla Vista is the site with the most variable mean kelp fronds per year because you can see the line connecting the data points stretching all the way up to nearly 40 kelp fronds and then back down to below 10. Visually, you can see the data line for Isla Vista dance all over the graph, the data points are farther apart and less consistent than the other two sites.
@@ -105,19 +105,19 @@ Carpinteria is the site with the least variable mean kelp fronds per year, visua
 ```{r}
 #| label: cleaning and wrangling
 #| include: false
-mopl_v2 <- mopl |> 
-  clean_names() |> 
-  select(edgedist, id, vo_nest)
-ggplot(data = mopl_v2,
-       aes(x = edgedist,
-           y = id,
-           color = id)) +
-  geom_jitter()
-ggplot(data = mopl_v2,
-       aes(x = vo_nest,
-           y = id,
-           color = id)) +
-  geom_jitter()
+mopl_v2 <- mopl |> #create new object for cleaning
+  clean_names() |>  #clean column names
+  select(edgedist, id, vo_nest) #select only 3 rows
+ggplot(data = mopl_v2, #create base layer using new data frame
+       aes(x = id, #set x axis
+           y = edgedist, #set y axis
+           color = id)) + #color by nest site usage
+  geom_jitter() #add in data points
+ggplot(data = mopl_v2, #create bases layer using new data frame
+       aes(x = id, #set x axis as other predictor variable
+           y = vo_nest, #set y axis
+           color = id)) + #color by nest site usage
+  geom_jitter() #add in data points
 ```
 ## a. Response variable
 The 1s and 0s represent whether the nest site was used (1) or available (0) by the Mountain plovers.
@@ -142,50 +142,50 @@ Distance to prairie dog colony edge is also a continuous variable. As distance t
 #| label: model running
 #| message: false
 #| include: false
-mopl_clean <- mopl |> 
-  clean_names() |> 
-  select(edgedist, id, vo_nest) |> 
-  mutate(used_bin = case_match(
+mopl_clean <- mopl |> #create new clean data frame
+  clean_names() |> #clean column names
+  select(edgedist, id, vo_nest) |> #select only three columns
+  mutate(used_bin = case_match( #create binomial response variable
     id,
     "used" ~ 1,
     "available" ~ 0))
 
 # model 0: null model
-model0 <- glm(used_bin ~ 1,
-             data = mopl_clean,
-             family = "binomial")
+model0 <- glm(used_bin ~ 1, #run glm with no predictor variables
+             data = mopl_clean, #data frame
+             family = "binomial") #set binomial distribution
 
 # model 1: all predictors
-model1 <- glm(used_bin ~ edgedist +
+model1 <- glm(used_bin ~ edgedist + #run glm with both predictors
                vo_nest,
-             data = mopl_clean,
-             family = "binomial")
+             data = mopl_clean, #data frame
+             family = "binomial") #set binomial distribution
 
 # model 2: edgedist only
-model2 <- glm(used_bin ~ edgedist,
-             data = mopl_clean,
-             family = "binomial")
+model2 <- glm(used_bin ~ edgedist, #run glm with only one predictor
+             data = mopl_clean, #data frame
+             family = "binomial") #set binomial distribution
 
 # model 3: vo_nest only
-model3 <- glm(used_bin ~ vo_nest,
-             data = mopl_clean,
-             family = "binomial")
+model3 <- glm(used_bin ~ vo_nest, #run glm with other predictor
+             data = mopl_clean, #data frame
+             family = "binomial") #set binomial distribution
 ```
 ## e. Seect the best model
 ```{r}
 #| label: Akaike's Information Criterion
-AICc(model0,
+AICc(model0, #run AICc for all models
     model1,
     model2,
     model3) |> 
-  arrange(AICc)
+  arrange(AICc) #arrange lowest to highest
 ```
 The best model as determined by Akaike's Information Criterion (AIC) and with a score of 331.81, was the model with only visual obstruction as a predictor and nest use as the response.
 
 ## f. Check the diagnostics
 ```{r}
 #| label: DHARMa time
-plot(
+plot( #create qqplot and DHARMa plots of residuals
   simulateResiduals(model3)
 )
 ```
@@ -194,31 +194,31 @@ plot(
 ```{r}
 #| label: graphing glm
 #| message: false
-mod_preds <- ggpredict(model3,
-                       terms = "vo_nest")
-ggplot(mopl_clean,
-       aes(x = vo_nest,
-           y = used_bin)) +
-  geom_point(size = 3,
-             alpha = 0.4,
-             color = "cadetblue")+
-  geom_ribbon(data = mod_preds,
-              aes(x = x,
-                  y = predicted,
-                  ymin = conf.low,
-                  ymax = conf.high),
-              alpha = 0.4,
-              fill = "cadetblue2") +
-  geom_line(data = mod_preds,
-            aes(x = x,
-                y = predicted),
-            color = "navy") +
-  scale_y_continuous(limits = c(0,1),
-                     breaks =c(0,1)) +
-  labs( x = "Visual Obstruction from Nest (dm)",
-        y = "Nest Site Usage (1 = used, 0 = available)",
-        title = "Nest site usage with visual obstruction") +
-  theme_minimal()
+mod_preds <- ggpredict(model3, #create new object with predictions from model 3
+                       terms = "vo_nest") #use vo_nest
+ggplot(mopl_clean, #create base layer with mopl_clean data frame
+       aes(x = vo_nest, #set x axis
+           y = used_bin)) + #set y axis
+  geom_point(size = 3, #add in data points and set size
+             alpha = 0.4, #adjust transparency
+             color = "cadetblue")+ #change color of data points
+  geom_ribbon(data = mod_preds, #add in CI
+              aes(x = x, #x axis
+                  y = predicted, #y aixs
+                  ymin = conf.low, #set lower range
+                  ymax = conf.high), #upper range
+              alpha = 0.4, #transparency
+              fill = "cadetblue2") + #color of shaded area
+  geom_line(data = mod_preds, #add in trendline
+            aes(x = x, #x axis
+                y = predicted), #y axis
+            color = "navy") + #set line color
+  scale_y_continuous(limits = c(0,1), #set y axis range 
+                     breaks =c(0,1)) + #y axis gridlines
+  labs( x = "Visual Obstruction from Nest (dm)", #set x axis title
+        y = "Nest Site Usage (1 = used, 0 = available)", #set y axis title
+        title = "Nest site usage with visual obstruction") + #set plot title
+  theme_minimal() #change theme
   
 ```
 ## h. Write a caption for your figure
@@ -228,12 +228,12 @@ ggplot(mopl_clean,
 ```{r}
 #| label: model predictions
 #| message: false
-ggpredict(model3,
-          terms = "vo_nest [0]")
+ggpredict(model3, #calculate model prediction when vo_nest is 0
+          terms = "vo_nest [0]") #prediction when vo_nest is 0
 ```
 ```{r}
 #| include: false
-gtsummary::tbl_regression(model3,
+gtsummary::tbl_regression(model3, #display results of model3 in a table, after exponentiation
                           exponentiate = TRUE)
 ```
 ## j. Interpret your results
@@ -254,37 +254,34 @@ I talked to An during week 9 about my visualization, specifically the bar plots,
 ```{r}
 #| label: check assumptions/ prove non-normality
 #| message: false
-reading_clean <- reading_data |> 
-  clean_names() |> 
-  rename("reading_time" = "time_spent_reading_min",
+reading_clean <- reading_data |> #create new clean data frame
+  clean_names() |> #clean column names
+  rename("reading_time" = "time_spent_reading_min", #rename columns to reading_time and genre
          "genre" = "reading_type") 
-reading_shapiro <- reading_clean |> 
-  group_by(genre) |> 
-  summarize(p_value = shapiro.test(reading_time)$p.value)
-print(reading_shapiro)
-ggplot(data = reading_clean,
-       aes(x = reading_time,
-           fill = genre)) +
-  geom_histogram(bins = 6) + 
-  facet_wrap(~genre)
+reading_shapiro <- reading_clean |> #create new object for shapiro test
+  group_by(genre) |>#group by genre
+  summarize(p_value = shapiro.test(reading_time)$p.value) #run shapiro-wilks normality test on reading time by genre
+print(reading_shapiro) #display results of shapiro-wilks test
+ggplot(data = reading_clean, #create base plot using clean data frame
+       aes(x = reading_time, #x axis is reading_time
+           fill = genre)) + #color bars by genre
+  geom_histogram(bins = 6) + #create histogram and set bin number
+  facet_wrap(~genre) #separate by genre
 ```
 
 ```{r}
 #| label: run kruskal-wallis and dunn
 #| message: false
-kruskal.test(
+kruskal.test( #run kruskal-wallis test between reading time and genre
   reading_time ~ genre,
-  data = reading_clean
-)
-dunn_test(
+  data = reading_clean) #use clean data frame
+dunn_test( #run post-hoc dunn test between reading time and genre
   reading_time ~ genre,
-  data = reading_clean,
-  p.adjust.method = "bonferroni"
-)
-kruskal_effsize(
-  reading_time ~ genre,
-  data = reading_clean
-)
+  data = reading_clean, #use clean data frame
+  p.adjust.method = "bonferroni") #name p-value adjustment method
+kruskal_effsize( #calculate kruskal-wallis effect size
+  reading_time ~ genre, #compare reading time across genres
+  data = reading_clean) #use clean data frame
 ```
 
 ## d. Create a visualization
@@ -316,11 +313,13 @@ ggplot(data = reading_clean, #create base layer with personal data
 **Figure 1. There is no difference in length of reading session across genre.** Each genre contains a box plot displaying the median reading length, upper and lower quartiles, and minimum and maximum. Outliers are hid for visual clarity but each genre’s highest point is classified as an outlier. Individual observations are layered on as data points. Genres are separated by color (pink: News, green: Nonfiction Novels, purple: Research Paper). All genres overlap with nearly identical medians. Data collected from January 6, 2026 to March 1, 2026 by Ian Del Tredici.
 
 ## f. Write about your results
+```{r}
+#| include: false
+reading_clean |> #use clean data frame
+  group_by(genre) |> #group by genre
+  summarize(median = median(reading_time)) #calculate median of reading time
+```
 I found no significant difference in median reading session between Nonfiction Novels, News, and Research Papers (Kruskal-Wallis test, χ²(2) = 0.703, p = 0.704, α = 0.05). The effect size was negligible ($\eta^2$ = -0.044) between the medians of the genres (Nonfiction Novels = 15.5min, News = 16min, Research Paper = 13min). This suggests that reading genre is not a strong predictor of reading session length and there may be other factors that contribute.
 
-```{r}
-reading_clean |> 
-  group_by(genre) |> 
-  summarize(median = median(reading_time))
-```
+
 
