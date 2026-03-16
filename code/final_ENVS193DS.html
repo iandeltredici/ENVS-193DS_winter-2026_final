@@ -206,7 +206,7 @@ window.Quarto = {
 <h1>Problem 1. Research Writing</h1>
 <section id="a.-transparent-statistical-methods" class="level2">
 <h2 class="anchored" data-anchor-id="a.-transparent-statistical-methods">a. Transparent statistical methods</h2>
-<p>In part 1 they used a simple linear regression model to determine if precipitation predicts flooded wetland area. In part 2 they used Kruskal-Wallis test to compare medians between two variables with one variable (water year classification) having multiple levels.</p>
+<p>In part 1 they used a simple linear regression model to determine if precipitation predicts flooded wetland area. In part 2 they used Kruskal-Wallis test to compare median flooded wetland area across the five water year classification groups.</p>
 </section>
 <section id="b.-figure-needed" class="level2">
 <h2 class="anchored" data-anchor-id="b.-figure-needed">b. Figure needed</h2>
@@ -280,11 +280,11 @@ window.Quarto = {
 <pre><code># A tibble: 5 × 3
   site_name    year mean_fronds
   &lt;fct&gt;       &lt;int&gt;       &lt;dbl&gt;
-1 Carpinteria  2003        5.27
-2 Isla Vista   2013        9.36
-3 Isla Vista   2010        4.78
-4 Carpinteria  2008        6.03
-5 Naples       2019        4.47</code></pre>
+1 Carpinteria  2006       10.8 
+2 Naples       2015       10.6 
+3 Carpinteria  2004        3.67
+4 Naples       2016        7.26
+5 Isla Vista   2007       23.6 </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(kelp_clean) <span class="co">#check structure of kelp_clean</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -308,8 +308,8 @@ window.Quarto = {
 </section>
 <section id="b.-purpose-of-study" class="level2">
 <h2 class="anchored" data-anchor-id="b.-purpose-of-study">b. Purpose of study</h2>
-<p>Visual obstruction is a continuous variable, as implied from paragraph 2 in the data collection subsection of Nest-Site Selection where he researchers describe measuring visual obstruction at the nest using a Robel pole and also in the data table where it’s clear that vo_nest is a continuous variable. As visual obstruction increases, the probability of Mountain Plover nest site use would decrease because Mountain Plovers prefer nest sites with short and sparse vegetation, as explained in paragraph 2 of the Introduction.</p>
-<p>Distance to prairie dog colony edge is also a continuous variable. As distance to nearest prairie dog colony increases, the probability of Mountain Plover nest site use would decrease because Mountain Plovers prefer disturbed soil with sparse vegetation to spot predators while also providing some cover. Information about the relationship between distance to colony and nest-site usage was found in the caption of the abstract figure while information about disturbance was found in paragraph 5 of the Introduction and in the Methods section, specifically paragraph 2 of the modeling framework subsection in Adult Mountain Plover Density.</p>
+<p>Visual obstruction is a continuous variable, as implied from paragraph 2 in the data collection subsection of Nest-Site Selection where he researchers describe measuring visual obstruction at the nest using a Robel pole and also in the data table where it’s clear that vo_nest is a continuous variable. As visual obstruction increases, the probability of Mountain Plover nest site use would decrease because Mountain plovers prefer nest sites with short and sparse vegetation, as explained in paragraph 2 of the Introduction.</p>
+<p>Distance to prairie dog colony edge is also a continuous variable. As distance to nearest prairie dog colony increases, the probability of Mountain Plover nest site use would decrease because Mountain plovers prefer disturbed soil with sparse vegetation to spot predators while also providing some cover. Information about the relationship between distance to colony and nest-site usage was found in the caption of the abstract figure while information about disturbance was found in paragraph 5 of the Introduction and in the Methods section, specifically paragraph 2 of the modeling framework subsection in Adult Mountain Plover Density.</p>
 </section>
 <section id="c.-table-of-models" class="level2">
 <h2 class="anchored" data-anchor-id="c.-table-of-models">c.&nbsp;Table of Models</h2>
@@ -461,7 +461,7 @@ model2  2 386.1351</code></pre>
 </section>
 <section id="h.-write-a-caption-for-your-figure" class="level2">
 <h2 class="anchored" data-anchor-id="h.-write-a-caption-for-your-figure">h. Write a caption for your figure</h2>
-<p><strong>Figure 1. As visual obstruction at the nest site increases, the probability of nest site usage decreases.</strong>. Each teal-colored point represents an individual nest that was assessed. The blue line represents the probability of a nest site being used as visual obstruction increases in distance. The light blue shaded area around the line is a 95% confidence interval. Nest site usage is protrayed as a binomial variable with 1 being a used nest and 0 representing an available nest. Data from: Duchardt, Courtney; Beck, Jeffrey; Augustine, David (2020). Mountain Plover habitat selection and nest survival in relation to weather variability and spatial attributes of Black-tailed Prairie Dog disturbance [Dataset]. Dryad. https://doi.org/10.5061/dryad.ttdz08kt7</p>
+<p><strong>Figure 1. As visual obstruction at the nest site increases, the probability of nest site usage decreases.</strong> Each teal-colored point represents an individual nest that was assessed. The blue line represents the probability of a nest site being used as visual obstruction increases in distance. The light blue shaded area around the line is a 95% confidence interval. Nest site usage is protrayed as a binomial variable with 1 being a used nest and 0 representing an available nest. Data from: Duchardt, Courtney; Beck, Jeffrey; Augustine, David (2020). Mountain Plover habitat selection and nest survival in relation to weather variability and spatial attributes of Black-tailed Prairie Dog disturbance [Dataset]. Dryad. https://doi.org/10.5061/dryad.ttdz08kt7</p>
 </section>
 <section id="i.-calculate-model-predictions" class="level2">
 <h2 class="anchored" data-anchor-id="i.-calculate-model-predictions">i. Calculate model predictions</h2>
@@ -591,7 +591,7 @@ Kruskal-Wallis chi-squared = 0.70291, df = 2, p-value = 0.7037</code></pre>
 </section>
 <section id="e.-write-a-caption" class="level2">
 <h2 class="anchored" data-anchor-id="e.-write-a-caption">e. Write a caption</h2>
-<p><strong>Figure 1. There is no difference in length of reading session across genre.</strong> Each genre contains a box plot displaying the median reading length, upper and lower quartiles, and minimum and maximum. Outliers are hid for visual clarity but each genre’s highest point is classified as an outlier. Individual observations are layered on as data points. Genres are separated by color (pink: News, green: Nonfiction Novels, purple: Research Paper). All genres overlap with nearly identical medians. Data collected from January 6, 2026 to March 1, 2026 by Ian Del Tredici.</p>
+<p><strong>Figure 1. There is no difference in length of reading session across genre.</strong> Each genre contains a box plot displaying the median reading length, upper and lower quartiles, and minimum and maximum. Outliers are hidden for visual clarity but each genre’s highest point is classified as an outlier. Individual observations are layered on as data points. Genres are separated by color (pink: News, green: Nonfiction Novels, purple: Research Paper). All genres overlap with nearly identical medians. Data collected from January 6, 2026 to March 1, 2026 by Ian Del Tredici.</p>
 </section>
 <section id="f.-write-about-your-results" class="level2">
 <h2 class="anchored" data-anchor-id="f.-write-about-your-results">f.&nbsp;Write about your results</h2>

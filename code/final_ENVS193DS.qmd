@@ -33,7 +33,7 @@ mopl <- read.csv(here("data", "MOPL_nest-site_selection_Duchardt_et_al._2019.csv
 
 # Problem 1. Research Writing
 ## a. Transparent statistical methods
-In part 1 they used a simple linear regression model to determine if precipitation predicts flooded wetland area. In part 2 they used Kruskal-Wallis test to compare medians between two variables with one variable (water year classification) having multiple levels.
+In part 1 they used a simple linear regression model to determine if precipitation predicts flooded wetland area. In part 2 they used Kruskal-Wallis test to compare median flooded wetland area across the five water year classification groups.
 
 ## b. Figure needed
 Five boxplots with water year classification on the x-axis and flooded wetland are would be the best method for displaying their test. Boxplots are the perfect visualization because they visually display the median, distribution, and allow comparison between the five groups
@@ -123,9 +123,9 @@ ggplot(data = mopl_v2, #create bases layer using new data frame
 The 1s and 0s represent whether the nest site was used (1) or available (0) by the Mountain plovers.
 
 ## b. Purpose of study
-Visual obstruction is a continuous variable, as implied from paragraph 2 in the data collection subsection of Nest-Site Selection where he researchers describe measuring visual obstruction at the nest using a Robel pole and also in the data table where it's clear that vo_nest is a continuous variable. As visual obstruction increases, the probability of Mountain Plover nest site use would decrease because Mountain Plovers prefer nest sites with short and sparse vegetation, as explained in paragraph 2 of the Introduction.
+Visual obstruction is a continuous variable, as implied from paragraph 2 in the data collection subsection of Nest-Site Selection where he researchers describe measuring visual obstruction at the nest using a Robel pole and also in the data table where it's clear that vo_nest is a continuous variable. As visual obstruction increases, the probability of Mountain Plover nest site use would decrease because Mountain plovers prefer nest sites with short and sparse vegetation, as explained in paragraph 2 of the Introduction.
 
-Distance to prairie dog colony edge is also a continuous variable. As distance to nearest prairie dog colony increases, the probability of Mountain Plover nest site use would decrease because Mountain Plovers prefer disturbed soil with sparse vegetation to spot predators while also providing some cover. Information about the relationship between distance to colony and nest-site usage was found in the caption of the abstract figure while information about disturbance was found in paragraph 5 of the Introduction and in the Methods section, specifically paragraph 2 of the modeling framework subsection in Adult Mountain Plover Density.
+Distance to prairie dog colony edge is also a continuous variable. As distance to nearest prairie dog colony increases, the probability of Mountain Plover nest site use would decrease because Mountain plovers prefer disturbed soil with sparse vegetation to spot predators while also providing some cover. Information about the relationship between distance to colony and nest-site usage was found in the caption of the abstract figure while information about disturbance was found in paragraph 5 of the Introduction and in the Methods section, specifically paragraph 2 of the modeling framework subsection in Adult Mountain Plover Density.
 
 ## c. Table of Models
 4 models total:
