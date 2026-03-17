@@ -1,7 +1,7 @@
 ---
 title: "ENVS 193DS Final"
 author: "Ian Del Tredici"
-date: "03-12-2026"
+date: "03-17-2026"
 format:
   html:
     toc: TRUE
@@ -33,10 +33,10 @@ mopl <- read.csv(here("data", "MOPL_nest-site_selection_Duchardt_et_al._2019.csv
 
 # Problem 1. Research Writing
 ## a. Transparent statistical methods
-In part 1 they used a simple linear regression model to determine if precipitation predicts flooded wetland area. In part 2 they used Kruskal-Wallis test to compare median flooded wetland area across the five water year classification groups.
+In part 1 they used a simple linear regression model to determine if precipitation predicts flooded wetland area. In part 2 they used a Kruskal-Wallis test to compare median flooded wetland area across the five water year classification groups.
 
 ## b. Figure needed
-Five boxplots with water year classification on the x-axis and flooded wetland are would be the best method for displaying their test. Boxplots are the perfect visualization because they visually display the median, distribution, and allow comparison between the five groups
+Five boxplots with water year classification on the x-axis and flooded wetland area on the y-axis would be the best method for displaying their test. Boxplots are the perfect visualization because they visually display the median, distribution, and allow comparison between the five groups
 
 ## c. Suggestions for rewriting
 Part 1: Precipitation did not significantly predict flooded wetland area (simple linear regression, F(df model, df error) = test statistic, R² = effect size, p = 0.11, α = significance level). 
@@ -64,10 +64,10 @@ kelp_clean <- kelp |> #create new clean object
        site_name = fct_relevel(site_name,
                                "Naples", "Isla Vista", "Carpinteria"))|> 
   group_by(site_name, year) |>  #function 5- group by site name and year
-  summarize(mean_fronds = mean(fronds)) |> #function 7 #calculate mean of frond length
+  summarize(mean_fronds = mean(fronds)) |> #function 7- calculate mean of frond length
   ungroup() #function 4- ungroup by site_name and year
-
-
+slice_sample(kelp_clean, n=5) #display 5 random rows of kelp_clean
+str(kelp_clean) #check structure of kelp_clean
 ```
 
 ## b. Understanding the data
@@ -94,8 +94,6 @@ ggplot(data = kelp_clean, #create base layer using kelp_clean data frame
   theme_minimal(base_family = "Noto Serif Georgian") + #use custom font for all labels and set theme
   theme(plot.title = element_text(hjust = 0.5), #set plot title to the center
       panel.border = element_blank()) #remove background panel (redundant with theme_minimal)
-slice_sample(kelp_clean, n=5) #display 5 random rows of kelp_clean
-str(kelp_clean) #check structure of kelp_clean
 ```
 ## d. Interpretation
 Isla Vista is the site with the most variable mean kelp fronds per year because you can see the line connecting the data points stretching all the way up to nearly 40 kelp fronds and then back down to below 10. Visually, you can see the data line for Isla Vista dance all over the graph, the data points are farther apart and less consistent than the other two sites.
@@ -179,7 +177,7 @@ AICc(model0, #run AICc for all models
     model3) |> 
   arrange(AICc) #arrange lowest to highest
 ```
-The best model as determined by Akaike's Information Criterion (AIC) with a score of 331.81, is the model with only visual obstruction as a predictor and nest use as the response.
+The best model as determined by Akaike's Information Criterion (AIC) with a score of 331.81, is the model with only visual obstruction as the predictor variable and nest use as the response.
 
 ## f. Check the diagnostics
 ```{r}
@@ -217,11 +215,13 @@ ggplot(mopl_clean, #create base layer with mopl_clean data frame
   labs( x = "Visual Obstruction from Nest (dm)", #set x axis title
         y = "Nest Site Usage (1 = used, 0 = available)", #set y axis title
         title = "Nest site usage with visual obstruction") + #set plot title
-  theme_minimal() #change theme
+  theme_minimal() |>  #change theme
+  theme(panel.grid = element_blank(), #remove gridlines
+        panel.background = element_blank()) #make background white
   
 ```
 ## h. Write a caption for your figure
-**Figure 1. As visual obstruction at the nest site increases, the probability of nest site usage decreases.** Each teal-colored point represents an individual nest that was assessed. The blue line represents the probability of a nest site being used as visual obstruction increases in distance. The light blue shaded area around the line is a 95% confidence interval. Nest site usage is protrayed as a binomial variable with 1 being a used nest and 0 representing an available nest. Data from: Duchardt, Courtney; Beck, Jeffrey; Augustine, David (2020). Mountain Plover habitat selection and nest survival in relation to weather variability and spatial attributes of Black-tailed Prairie Dog disturbance [Dataset]. Dryad. https://doi.org/10.5061/dryad.ttdz08kt7
+**Figure 1. As visual obstruction at the nest site increases, the probability of nest site usage decreases.** Each teal-colored point represents an individual nest that was assessed. The blue line represents the probability of a nest site being used as visual obstruction increases in distance (1 = 100%, 0 = 0%). The light blue shaded area around the line is a 95% confidence interval. Nest site usage is portrayed as a binomial variable with 1 being a used nest and 0 representing an available nest. Data from: Duchardt, Courtney; Beck, Jeffrey; Augustine, David (2020). Mountain Plover habitat selection and nest survival in relation to weather variability and spatial attributes of Black-tailed Prairie Dog disturbance [Dataset]. Dryad. https://doi.org/10.5061/dryad.ttdz08kt7
 
 ## i. Calculate model predictions
 ```{r}
