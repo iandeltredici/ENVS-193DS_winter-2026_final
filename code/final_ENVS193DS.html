@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Ian Del Tredici">
-<meta name="dcterms.date" content="2026-03-12">
+<meta name="dcterms.date" content="2026-03-17">
 
 <title>ENVS 193DS Final</title>
 <style>
@@ -172,7 +172,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 12, 2026</p>
+      <p class="date">March 17, 2026</p>
     </div>
   </div>
   
@@ -247,11 +247,11 @@ window.Quarto = {
 <pre><code># A tibble: 5 × 3
   site_name    year mean_fronds
   &lt;fct&gt;       &lt;int&gt;       &lt;dbl&gt;
-1 Carpinteria  2017       13.4 
-2 Carpinteria  2022        9.52
-3 Naples       2002        3.01
-4 Carpinteria  2014        7.26
-5 Naples       2013        9.20</code></pre>
+1 Carpinteria  2015        5.03
+2 Naples       2016        7.26
+3 Isla Vista   2009       30.2 
+4 Isla Vista   2001        6.5 
+5 Naples       2023        4.87</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(kelp_clean) <span class="co">#check structure of kelp_clean</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -406,7 +406,7 @@ model0  1 384.6318
 model2  2 386.1351</code></pre>
 </div>
 </div>
-<p>The best model as determined by Akaike’s Information Criterion (AIC) with a score of 331.81, is the model with only visual obstruction as a predictor and nest use as the response.</p>
+<p>The best model as determined by Akaike’s Information Criterion (AIC) with a score of 331.81, is the model with only visual obstruction as the predictor variable and nest use as the response.</p>
 </section>
 <section id="f.-check-the-diagnostics" class="level2">
 <h2 class="anchored" data-anchor-id="f.-check-the-diagnostics">f.&nbsp;Check the diagnostics</h2>
@@ -449,7 +449,9 @@ model2  2 386.1351</code></pre>
 <span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>( <span class="at">x =</span> <span class="st">"Visual Obstruction from Nest (dm)"</span>, <span class="co">#set x axis title</span></span>
 <span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> <span class="st">"Nest Site Usage (1 = used, 0 = available)"</span>, <span class="co">#set y axis title</span></span>
 <span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">"Nest site usage with visual obstruction"</span>) <span class="sc">+</span> <span class="co">#set plot title</span></span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="co">#change theme</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">|&gt;</span>  <span class="co">#change theme</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid =</span> <span class="fu">element_blank</span>(), <span class="co">#remove gridlines</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.background =</span> <span class="fu">element_blank</span>()) <span class="co">#make background white</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -461,7 +463,7 @@ model2  2 386.1351</code></pre>
 </section>
 <section id="h.-write-a-caption-for-your-figure" class="level2">
 <h2 class="anchored" data-anchor-id="h.-write-a-caption-for-your-figure">h. Write a caption for your figure</h2>
-<p><strong>Figure 1. As visual obstruction at the nest site increases, the probability of nest site usage decreases.</strong> Each teal-colored point represents an individual nest that was assessed. The blue line represents the probability of a nest site being used as visual obstruction increases in distance. The light blue shaded area around the line is a 95% confidence interval. Nest site usage is protrayed as a binomial variable with 1 being a used nest and 0 representing an available nest. Data from: Duchardt, Courtney; Beck, Jeffrey; Augustine, David (2020). Mountain Plover habitat selection and nest survival in relation to weather variability and spatial attributes of Black-tailed Prairie Dog disturbance [Dataset]. Dryad. https://doi.org/10.5061/dryad.ttdz08kt7</p>
+<p><strong>Figure 1. As visual obstruction at the nest site increases, the probability of nest site usage decreases.</strong> Each teal-colored point represents an individual nest that was assessed. The blue line represents the probability of a nest site being used as visual obstruction increases in distance (1 = 100%, 0 = 0%). The light blue shaded area around the line is a 95% confidence interval. Nest site usage is portrayed as a binomial variable with 1 being a used nest and 0 representing an available nest. Data from: Duchardt, Courtney; Beck, Jeffrey; Augustine, David (2020). Mountain Plover habitat selection and nest survival in relation to weather variability and spatial attributes of Black-tailed Prairie Dog disturbance [Dataset]. Dryad. https://doi.org/10.5061/dryad.ttdz08kt7</p>
 </section>
 <section id="i.-calculate-model-predictions" class="level2">
 <h2 class="anchored" data-anchor-id="i.-calculate-model-predictions">i. Calculate model predictions</h2>
